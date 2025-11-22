@@ -32,7 +32,7 @@
 
     /* specific card slots to avoid overlap */
     .header-card{align-items:center;justify-content:flex-start;padding:10px 12px}
-    .allies-card{display:flex;flex-direction:column;padding:8px;overflow:auto}
+    .allies-card{display:flex;flex-direction:column;padding:12px;overflow:auto}
     .life-row{display:block}
 
     .header{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 8px;gap:12px}
@@ -53,6 +53,9 @@
     .lifeCard{display:flex;flex-direction:column;gap:8px;padding:8px;min-height:0;align-items:stretch}
 
     .life{font-size:32px;font-weight:900;text-align:center;border:2px solid rgba(212,175,55,0.12);border-radius:12px;padding:6px 4px;min-width:0;color:var(--gold);background:linear-gradient(180deg, rgba(212,175,55,0.03), transparent);text-shadow:0 6px 14px rgba(0,0,0,0.55)}
+
+    /* half-life warning: when life <= 10 */
+    .life.low{color:var(--marcial);border-color:var(--marcial);background:linear-gradient(180deg, rgba(239,68,68,0.06), transparent);box-shadow:0 8px 28px rgba(239,68,68,0.08)}
 
     .name{font-size:12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);cursor:pointer}
 
@@ -102,7 +105,7 @@
 
     .precision-btn{padding:8px 12px;border-radius:10px;border:1px solid rgba(212,175,55,0.12);background:transparent;color:var(--muted);font-weight:800;cursor:pointer}
 
-    .allies{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows: minmax(48px, auto);gap:8px;width:100%;min-height:0;padding:6px}
+    .allies{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));grid-auto-rows: minmax(48px, auto);gap:12px;width:100%;min-height:0;padding:0;margin:0}
     .ally{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr;gap:6px;align-items:center;border:1px solid rgba(255,255,255,0.03);border-radius:12px;padding:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));min-height:44px}
     .ally:hover{box-shadow:0 8px 24px rgba(0,0,0,0.6)}
     .ally .an{grid-column:1 / span 2;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);cursor:pointer}
@@ -118,14 +121,15 @@
       .wrap{padding:8px;max-width:420px;grid-template-rows:auto auto 1fr auto}
       .header{padding:0 6px;gap:8px}
       .header-left{min-width:0}
-      .d20-btn{width:60px;height:60px;font-size:16px;border-width:2px}
-      .d20-svg{width:60px;height:60px}
+      .d20-btn{width:84px;height:84px;font-size:16px;border-width:2px}
+      .d20-svg{width:72px;height:72px}
+      .d20-svg .num{font-size:20px}
       .d20-face{font-size:16px}
       .bigbtn{padding:8px;border-radius:10px;font-size:14px}
       .precision-btn{padding:6px 10px;font-size:14px}
       .life{font-size:36px;padding:6px}
       .dice{grid-template-columns:1fr;gap:6px}
-      .allies{grid-template-columns:1fr;gap:6px;padding:4px}
+      .allies{grid-template-columns:repeat(2, minmax(0, 1fr));gap:6px;padding:4px}
       .ally{min-height:48px;padding:6px}
       .footer{grid-template-columns:1fr;gap:8px}
       .footer .bigbtn{width:100%}
@@ -358,6 +362,18 @@
     else if(p1===0 && p2===0){ alert('Empate: ambos chegaram a 0.') }
   }
 
+  // apply visual state for life (half warning)
+  function applyLifeState(p){
+    const el = get(p+'life')
+    if(!el) return
+    const v = parseInt(el.textContent||'0', 10)
+    if(!isNaN(v) && v<=10){
+      el.classList.add('low')
+    }else{
+      el.classList.remove('low')
+    }
+  }
+
   // Life (clamp em 0 e dispara vitória ao chegar a 0)
   function mod(p, d){
     const el = get(p+'life')
@@ -365,6 +381,7 @@
     v = clamp0(v + d)
     el.textContent = v
     applyAffBorder(p)
+    applyLifeState(p)
     if(v===0) checkWinner()
   }
 
@@ -387,11 +404,25 @@
 
   // Affiliation dots → color
   function applyAffBorder(p){
-    const color = state[p].color
-    get(p+'life').style.borderColor = color
+    const color = state[p].color || '#6b7280'
+    // apply to life card
+    const lifeEl = get(p+'life')
+    if(lifeEl) lifeEl.style.borderColor = color
+    // apply to ally slots: use solid color when value present, softer translucent when empty
     document.querySelectorAll(`.ally[data-p="${p}"]`).forEach(a=>{
-      const has = a.querySelector('.val').textContent !== '—'
-      a.style.borderColor = has ? color : 'var(--line)'
+      const val = a.querySelector('.val').textContent
+      const has = val !== '—' && val !== ''
+      a.style.borderStyle = 'solid'
+      if(has){
+        a.style.borderColor = color
+        a.style.borderWidth = '2px'
+        a.style.boxShadow = `0 10px 30px ${color}55`
+      }else{
+        // slightly stronger translucent border for empty slots
+        a.style.borderColor = color + '55'
+        a.style.borderWidth = '1px'
+        a.style.boxShadow = 'none'
+      }
     })
   }
   const state = {
@@ -440,6 +471,7 @@
         })
       })
       applyAffBorder('p1'); applyAffBorder('p2')
+      applyLifeState('p1'); applyLifeState('p2')
     }catch(e){}
   }
 
@@ -452,6 +484,7 @@
         base.querySelector('.val').textContent = '—'
       }
       setAff(p,'arcana')
+      applyLifeState(p)
     })
   }
 
