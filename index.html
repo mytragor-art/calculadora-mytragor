@@ -9,63 +9,186 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png"/>
   <style>
     :root{
-      --bg:#0b0f14; --card:#0f1722; --line:#1f2b3a; --text:#e8eef6; --muted:#9fb3c8;
+      /* Black & Gold theme */
+      --bg:#050505; /* page background */
+      --card-bg:#0b0b0b; /* card surface */
+      --line:rgba(212,175,55,0.14); /* subtle gold line */
+      --text:#f3ebd7; /* warm off-white */
+      --muted:rgba(243,235,215,0.62);
+      --gold:#D4AF37; /* primary gold */
+      --gold-deep:#b8860b;
+      --accent:#bdbdbd;
       --arcana:#3b82f6; --marcial:#ef4444; --sombras:#374151; --religioso:#f59e0b;
     }
+
     *{box-sizing:border-box;-webkit-tap-highlight-color: transparent}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;height:100%}
+    html,body{margin:0;padding:0;background:radial-gradient(1200px 400px at 10% 10%, rgba(212,175,55,0.02), transparent), var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Arial,sans-serif;height:100%}
     body{overflow:hidden}
-    .wrap{height:100vh;display:grid;grid-template-rows:10vh 24vh 44vh 22vh;gap:6px;padding:6px;max-width:560px;margin:0 auto}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px;display:flex;align-items:center;justify-content:center}
-    .header{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 6px}
-    .title{font-size:16px;margin:0}
+
+    /* layout: fixed header, fixed life row, allies fills remaining, fixed footer */
+    .wrap{height:100vh;display:grid;grid-template-rows:110px 120px 1fr 64px;gap:12px;padding:12px;max-width:720px;margin:0 auto;min-width:320px}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.02);min-height:0}
+
+    /* specific card slots to avoid overlap */
+    .header-card{align-items:center;justify-content:flex-start;padding:10px 12px}
+    .allies-card{display:flex;flex-direction:column;padding:8px;overflow:auto}
+    .life-row{display:block}
+
+    .header{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 8px;gap:12px}
+    .header-left{display:flex;flex-direction:column;gap:2px;min-width:0}
+    .header-center{display:flex;flex-direction:column;align-items:center;gap:6px}
+    .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:0}
+    .title{font-size:18px;margin:0;color:var(--gold);letter-spacing:0.6px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    @keyframes pulse-gold {
+      0% { text-shadow: 0 0 4px rgba(212,175,55,0.12), 0 4px 12px rgba(0,0,0,0.55); transform: translateY(0); }
+      50% { text-shadow: 0 0 8px rgba(212,175,55,0.16), 0 6px 16px rgba(0,0,0,0.56); transform: translateY(-0.6px); }
+      100% { text-shadow: 0 0 4px rgba(212,175,55,0.12), 0 4px 12px rgba(0,0,0,0.55); transform: translateY(0); }
+    }
+    .title.pulse{animation: pulse-gold 6s ease-in-out infinite}
     .mini{text-align:center;font-size:12px;color:var(--muted)}
-    .row{display:flex;gap:6px;align-items:center;justify-content:space-between;width:100%}
-    .lifeWrap{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-    .lifeCard{display:grid;grid-template-rows:auto 1fr auto;gap:2px;padding:6px}
-    .life{font-size:36px;font-weight:900;text-align:center;border:2px solid var(--line);border-radius:12px;padding:4px 0;min-width:0}
-    .name{font-size:12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#d6e2f0}
+
+    .row{display:flex;gap:8px;align-items:center;justify-content:space-between;width:100%;min-width:0}
+    .lifeWrap{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:12px;width:100%}
+    .lifeCard{display:flex;flex-direction:column;gap:8px;padding:8px;min-height:0;align-items:stretch}
+
+    .life{font-size:32px;font-weight:900;text-align:center;border:2px solid rgba(212,175,55,0.12);border-radius:12px;padding:6px 4px;min-width:0;color:var(--gold);background:linear-gradient(180deg, rgba(212,175,55,0.03), transparent);text-shadow:0 6px 14px rgba(0,0,0,0.55)}
+
+    .name{font-size:12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);cursor:pointer}
+
     .aff{display:flex;gap:6px;justify-content:center}
-    .aff .dot{width:14px;height:14px;border-radius:50%;border:1px solid var(--line);opacity:.9;cursor:pointer}
-    .aff .dot.active{outline:2px solid white;outline-offset:1px}
-    .bigbtn{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:#122035;color:var(--text);font-weight:900}
-    .dice{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%}
-    .dice .box{border:1px dashed var(--line);border-radius:10px;padding:8px;text-align:center;font-weight:800}
-    .allies{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(5, 1fr);gap:6px;width:100%}
-    .ally{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr;gap:4px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:6px;background:#0d1522;min-height:0}
-    .ally .an{grid-column:1 / span 2;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#d6e2f0;cursor:pointer}
-    .ally .val{justify-self:end;font-size:18px;font-weight:900;border:1px solid var(--line);border-radius:8px;padding:2px 6px;min-width:22px;text-align:center}
-    .ally .btns{display:flex;gap:6px}
-    .ally .btn{padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:#13243a;color:#e8eef6;font-weight:900}
-    .footer{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%}
+    .aff .dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(255,255,255,0.04);opacity:.95;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.6)}
+    .aff .dot.active{box-shadow:0 0 0 5px rgba(212,175,55,0.12), 0 6px 18px rgba(0,0,0,0.6)}
+
+    .bigbtn{flex:1;padding:12px;border-radius:12px;border:1px solid rgba(212,175,55,0.12);background:linear-gradient(180deg, rgba(212,175,55,0.06), rgba(212,175,55,0.02));color:var(--gold);font-weight:800;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease}
+    .bigbtn:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.6)}
+
+    /* smaller controls inside life cards to prevent overflow */
+    .lifeCard .bigbtn{padding:8px;font-size:14px;border-radius:10px;box-sizing:border-box}
+    .lifeCard .row{display:flex;gap:6px;align-items:center;justify-content:space-between}
+    .lifeCard .row .bigbtn{flex:1;min-width:0}
+
+    .dice{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+    .dice .box{border:1px dashed rgba(212,175,55,0.06);border-radius:10px;padding:10px;text-align:center;font-weight:800;background:transparent;color:var(--accent)}
+    .box{border:1px dashed rgba(212,175,55,0.06);border-radius:10px;padding:8px 10px;text-align:center;font-weight:800;background:transparent;color:var(--accent)}
+    .box.highlight{box-shadow:0 0 18px rgba(212,175,55,0.45);border-color:var(--gold-deep);transition:box-shadow .4s ease}
+
+    /* d20 circular button */
+    .d20-btn:active{transform:scale(.98)}
+    .d20-face{font-size:22px;letter-spacing:1px}
+    .d20-btn.rolling{animation: d20-roll 0.9s cubic-bezier(.2,.8,.2,1)}
+    @keyframes d20-roll{0%{transform:rotate(0) scale(1)}25%{transform:rotate(15deg) scale(1.02)}50%{transform:rotate(-18deg) scale(1.04)}75%{transform:rotate(8deg) scale(1.02)}100%{transform:rotate(0) scale(1)}}
+    /* SVG d20 styling */
+    .d20-btn{background:transparent;border:1px solid rgba(212,175,55,0.06);padding:6px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;appearance:none;-webkit-appearance:none}
+    .d20-svg{width:72px;height:72px;display:block;background:transparent}
+    .d20-svg .face{fill:url(#goldGrad2);stroke:rgba(0,0,0,0.28);stroke-width:1}
+    .d20-svg .edge{fill:rgba(0,0,0,0.06)}
+    .d20-svg .num{
+      fill:var(--text);
+      stroke:rgba(0,0,0,0.7);
+      stroke-width:1px;
+      stroke-linejoin:round;
+      paint-order:stroke fill;
+      font-weight:900;
+      font-size:18px;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+      transform-origin:50% 50%;
+      transform-box:fill-box;
+      transition:transform .22s cubic-bezier(.2,.9,.2,1);
+      text-rendering:optimizeLegibility;
+      shape-rendering:geometricPrecision;
+    }
+    .d20-svg .num.pop{transform:scale(1.35)}
+
+    .precision-btn{padding:8px 12px;border-radius:10px;border:1px solid rgba(212,175,55,0.12);background:transparent;color:var(--muted);font-weight:800;cursor:pointer}
+
+    .allies{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows: minmax(48px, auto);gap:8px;width:100%;min-height:0;padding:6px}
+    .ally{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr;gap:6px;align-items:center;border:1px solid rgba(255,255,255,0.03);border-radius:12px;padding:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));min-height:44px}
+    .ally:hover{box-shadow:0 8px 24px rgba(0,0,0,0.6)}
+    .ally .an{grid-column:1 / span 2;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);cursor:pointer}
+    .ally .val{justify-self:end;font-size:18px;font-weight:900;border:1px solid rgba(212,175,55,0.08);border-radius:10px;padding:4px 8px;min-width:28px;text-align:center;color:var(--gold);background:linear-gradient(180deg, rgba(212,175,55,0.03), transparent)}
+    .ally .btns{display:flex;gap:8px}
+    .ally .btn{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);font-weight:800;cursor:pointer}
+
+    .footer{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;align-items:center}
     .muted{color:var(--muted);font-size:11px;text-align:center}
-    #install{position:fixed;bottom:12px;left:12px;right:12px;display:none}
+    #install{position:fixed;bottom:16px;left:16px;right:16px;display:none}
+    /* Responsive adjustments for small screens */
+    @media (max-width:480px){
+      .wrap{padding:8px;max-width:420px;grid-template-rows:auto auto 1fr auto}
+      .header{padding:0 6px;gap:8px}
+      .header-left{min-width:0}
+      .d20-btn{width:60px;height:60px;font-size:16px;border-width:2px}
+      .d20-svg{width:60px;height:60px}
+      .d20-face{font-size:16px}
+      .bigbtn{padding:8px;border-radius:10px;font-size:14px}
+      .precision-btn{padding:6px 10px;font-size:14px}
+      .life{font-size:36px;padding:6px}
+      .dice{grid-template-columns:1fr;gap:6px}
+      .allies{grid-template-columns:1fr;gap:6px;padding:4px}
+      .ally{min-height:48px;padding:6px}
+      .footer{grid-template-columns:1fr;gap:8px}
+      .footer .bigbtn{width:100%}
+      .row.mini{flex-direction:column;gap:6px}
+      .box{width:100%}
+    }
   </style>
+  
 </head>
 <body>
   <div class="wrap">
     <!-- 1) Header / D20 -->
-    <div class="card">
+    <div class="card header-card">
       <div style="width:100%">
         <div class="header">
-          <div>
-            <div class="title">Mytragor — HUD</div>
-            <div class="mini">Sem rolagem • Mobile • PWA</div>
+          <div class="header-left">
+            <div class="title pulse">Mytragor</div>
           </div>
-          <div class="dice">
-            <button class="bigbtn" onclick="roll()">d20</button>
-            <button class="bigbtn" onclick="rollPrecision()">Precisão</button>
+
+          <div class="header-center" style="align-items:center">
+            <button class="d20-btn" onclick="rollFX()" aria-label="Rolar d20">
+              <svg class="d20-svg" viewBox="0 0 120 120" role="img" aria-hidden="true">
+                <defs>
+                  <linearGradient id="goldGrad2" x1="0" x2="1">
+                    <stop offset="0%" stop-color="#f2d98a" />
+                    <stop offset="50%" stop-color="#f2d98a" />
+                    <stop offset="100%" stop-color="#b8860b" />
+                  </linearGradient>
+                  <filter id="d20Shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="6" stdDeviation="10" flood-opacity="0.45" flood-color="#000" />
+                  </filter>
+                </defs>
+                <!-- subtle outer ring -->
+                <circle cx="60" cy="60" r="56" fill="rgba(0,0,0,0.08)" />
+                <!-- main poly facets (pseudo-icosahedron) -->
+                <g filter="url(#d20Shadow)">
+                  <path class="face" d="M60 12 L92 30 L102 60 L92 90 L60 108 L28 90 L18 60 L28 30 Z" fill="url(#goldGrad2)" stroke="rgba(0,0,0,0.18)" stroke-width="1" />
+                </g>
+                <!-- central diamond + inner facets for depth -->
+                <polygon points="60,22 88,40 76,76 44,76 32,40" fill="rgba(0,0,0,0.04)" />
+                <polygon points="60,28 82,44 72,72 48,72 38,44" fill="url(#goldGrad2)" stroke="rgba(0,0,0,0.12)" stroke-width="0.6" />
+                <!-- number -->
+                <text x="60" y="66" text-anchor="middle" class="num">20</text>
+              </svg>
+            </button>
+            <div class="row mini" style="margin-top:8px;display:flex;gap:8px;justify-content:center">
+              <div id="rollout" class="box" style="width:140px;text-align:center">—</div>
+              <div id="rollout2" class="box" style="width:140px;text-align:center">—</div>
+            </div>
           </div>
-        </div>
-        <div class="row mini" style="margin-top:4px">
-          <div id="rollout" class="box" style="flex:1;text-align:center">—</div>
-          <div id="rollout2" class="box" style="flex:1;text-align:center">—</div>
+
+          <div class="header-right">
+            <div style="display:flex;gap:8px;align-items:center">
+              <button id="soundToggle" class="precision-btn" title="Som (desligado)" onclick="toggleSound()">🔈</button>
+              <button class="precision-btn" onclick="rollPrecisionFX()">Precisão</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- 2) Life row -->
-    <div class="lifeWrap">
+    <div class="lifeWrap life-row">
       <div class="card lifeCard" id="p1card">
         <div class="name" id="p1name" onclick="editName('p1')">Jogador 1</div>
         <div class="life" id="p1life">20</div>
@@ -97,7 +220,7 @@
     </div>
 
     <!-- 3) Allies grid (10 tiles total) -->
-    <div class="card" style="padding:6px">
+    <div class="card allies-card" style="padding:6px">
       <div class="allies">
         <!-- P1 left / P2 right -->
         <!-- generated below with script if desired; here inline static for caching simplicity -->
@@ -126,6 +249,8 @@
   </div>
 
   <button class="bigbtn" id="install">Instalar app</button>
+
+  <canvas id="confettiCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:9999;display:none"></canvas>
 
 <script>
   // --- PWA install prompt
@@ -165,9 +290,64 @@
     if(nn!==null){ el.textContent = nn || ('Aliado '+(i+1)) }
   }
 
-  // D20
-  function roll(){ const n = 1 + Math.floor(Math.random()*20); get('rollout').textContent = 'd20: '+n; return n }
-  function rollPrecision(){ const a = roll(), b = roll(); const best = Math.max(a,b); get('rollout2').textContent = '2d20: '+a+' / '+b+' → '+best; return best }
+  // D20: efeitos (rollImmediate para uso interno; rollFX/rollPrecisionFX para botões com animação/sons)
+  function rollImmediate(){ const n = 1 + Math.floor(Math.random()*20); return n }
+
+  // simple UI update helper
+  function showSingleRoll(n){ get('rollout').textContent = 'd20: '+n }
+  function showPrecision(a,b){ const best = Math.max(a,b); get('rollout2').textContent = '2d20: '+a+' / '+b+' → '+best; return best }
+
+  // Audio / FX controls
+  let audioEnabled = false
+  let audioCtx = null
+  function toggleSound(){ audioEnabled = !audioEnabled; const btn = get('soundToggle'); btn.textContent = audioEnabled? '🔊' : '🔈'; btn.title = audioEnabled? 'Som (ligado)' : 'Som (desligado)'; if(audioEnabled && !audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)() }catch(e){ audioCtx = null } } }
+
+  function playRollSound(){ if(!audioEnabled) return; if(!audioCtx) try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)() }catch(e){ return }
+    const duration = 0.8
+    const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate*duration, audioCtx.sampleRate)
+    const data = buffer.getChannelData(0)
+    for(let i=0;i<data.length;i++){ // decaying noise
+      data[i] = (Math.random()*2-1) * Math.exp(-4*i/data.length)
+    }
+    const src = audioCtx.createBufferSource(); src.buffer = buffer
+    const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 1400
+    src.connect(filter); filter.connect(audioCtx.destination); src.start(); src.stop(audioCtx.currentTime+duration)
+  }
+
+  function playTriumph(){ if(!audioEnabled) return; if(!audioCtx) try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)() }catch(e){ return }
+    const now = audioCtx.currentTime; const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type='sine'; o.frequency.setValueAtTime(880, now); g.gain.setValueAtTime(0.001, now); g.gain.linearRampToValueAtTime(0.14, now+0.02); g.gain.exponentialRampToValueAtTime(0.001, now+0.9); o.connect(g); g.connect(audioCtx.destination); o.start(now); o.stop(now+0.9)
+  }
+
+  // Confetti (simple particle system)
+  const confetti = { particles:[], running:false, canvas:null, ctx:null }
+  function ensureConfettiCanvas(){ if(confetti.canvas) return; confetti.canvas = document.getElementById('confettiCanvas'); confetti.ctx = confetti.canvas.getContext('2d'); resizeCanvas(); window.addEventListener('resize', resizeCanvas) }
+  function resizeCanvas(){ if(!confetti.canvas) return; confetti.canvas.width = window.innerWidth; confetti.canvas.height = window.innerHeight }
+  function launchConfetti(count=40){ ensureConfettiCanvas(); confetti.canvas.style.display = 'block'; const colors = ['#D4AF37','#b8860b','#f5e6b0','#fff1c6']
+    for(let i=0;i<count;i++){ confetti.particles.push({ x: Math.random()*confetti.canvas.width, y: -10, vx:(Math.random()-0.5)*6, vy: Math.random()*4+2, size:Math.random()*8+4, rot:Math.random()*360, rotSpeed:(Math.random()-0.5)*10, color: colors[Math.floor(Math.random()*colors.length)], life: Math.random()*60+80 }) }
+    if(!confetti.running){ confetti.running = true; requestAnimationFrame(confettiLoop) }
+  }
+  function confettiLoop(){ const ctx = confetti.ctx; ctx.clearRect(0,0,confetti.canvas.width, confetti.canvas.height); for(let i=confetti.particles.length-1;i>=0;i--){ const p = confetti.particles[i]; p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.rot += p.rotSpeed; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180); ctx.fillStyle = p.color; ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6); ctx.restore(); p.life--; if(p.y>confetti.canvas.height+50 || p.life<0){ confetti.particles.splice(i,1) } }
+    if(confetti.particles.length>0){ requestAnimationFrame(confettiLoop) }else{ confetti.running=false; setTimeout(()=>{ if(confetti.canvas) confetti.canvas.style.display='none' }, 300) }
+  }
+
+  // visual highlight helper
+  function flashBox(id){ const el = get(id); if(!el) return; el.classList.add('highlight'); setTimeout(()=>el.classList.remove('highlight'), 900) }
+
+  // FX roll for d20 button (with animation and optional sound/confetti)
+  function rollFX(){ const btn = document.querySelector('.d20-btn'); if(!btn) return; btn.classList.add('rolling'); playRollSound(); setTimeout(()=>{
+      const n = rollImmediate(); showSingleRoll(n);
+      // update SVG number and animate
+      const svgNum = document.querySelector('.d20-svg .num'); if(svgNum){ svgNum.textContent = n; svgNum.classList.add('pop'); setTimeout(()=>svgNum.classList.remove('pop'), 420) }
+      btn.classList.remove('rolling'); if(n>=20){ launchConfetti(60); playTriumph(); flashBox('rollout') } else if(n>=15){ flashBox('rollout') }
+    }, 900); return null }
+
+  // precision FX: two rolls, show both and best
+  function rollPrecisionFX(){ const btn = document.querySelector('.d20-btn'); if(btn) btn.classList.add('rolling'); playRollSound(); setTimeout(()=>{
+      const a = rollImmediate(); const b = rollImmediate(); const best = showPrecision(a,b); showSingleRoll(Math.max(a,b));
+      // update SVG number and animate with best
+      const svgNum2 = document.querySelector('.d20-svg .num'); if(svgNum2){ svgNum2.textContent = best; svgNum2.classList.add('pop'); setTimeout(()=>svgNum2.classList.remove('pop'), 420) }
+      if(btn) btn.classList.remove('rolling'); if(best>=20){ launchConfetti(60); playTriumph(); flashBox('rollout2') } else if(best>=15){ flashBox('rollout2') }
+    }, 900); return null }
 
   // Vitória
   function checkWinner(){
