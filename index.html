@@ -218,7 +218,7 @@
 
     <!-- 4) Footer / Save / Install -->
     <div class="card footer">
-      <button class="bigbtn" onclick="savePrefs()">Salvar</button>
+      <button class="bigbtn" onclick="resetAll()">Reset</button>
       <button class="bigbtn" onclick="resetAll()">Reset</button>
     </div>
   </div>
@@ -403,7 +403,6 @@
   window.addEventListener('load', ()=>{
     setAff('p1','arcana')
     setAff('p2','arcana')
-    loadPrefs()
     document.querySelectorAll('.aff .dot').forEach(dot=>{
       dot.addEventListener('click', ()=> setAff(dot.dataset.p, dot.dataset.aff))
     })
@@ -413,17 +412,5 @@
   // Mobile: long-press support on life +/- buttons to apply ×5 (touch-friendly)
   function setupLongPressControls(){
     document.querySelectorAll('.lifeCard .bigbtn[data-player]').forEach(btn=>{
-      let timer = null
-      const player = btn.dataset.player
-      const delta = parseInt(btn.dataset.delta || '1', 10)
-      const applyLong = ()=>{ mod(player, delta * 5) }
-      btn.addEventListener('pointerdown', (e)=>{ e.preventDefault(); timer = setTimeout(applyLong, 600) })
-      const clear = ()=>{ if(timer){ clearTimeout(timer); timer = null } }
-      btn.addEventListener('pointerup', clear)
-      btn.addEventListener('pointercancel', clear)
-      btn.addEventListener('pointerleave', clear)
-    })
-  }
-</script>
-</body>
-</html>
+
+    document.querySelectorAll('.lifeCard .bigbtn[data-player]').forEach(btn=>{
