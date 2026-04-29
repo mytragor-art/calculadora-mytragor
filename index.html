@@ -18,7 +18,7 @@
       --gold:#D4AF37; /* primary gold */
       --gold-deep:#b8860b;
       --accent:#bdbdbd;
-      --arcana:#3b82f6; --marcial:#ef4444; --sombras:#374151; --religioso:#f59e0b;
+      --arcana:#3b82f6; --marcial:#ef4444; --sombras:#7c3aed; --religioso:#f59e0b;
     }
 
     *{box-sizing:border-box;-webkit-tap-highlight-color: transparent}
@@ -62,12 +62,13 @@
     .aff{display:flex;gap:6px;justify-content:center}
     .aff .dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(255,255,255,0.04);opacity:.95;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.6)}
     .aff .dot.active{box-shadow:0 0 0 5px rgba(212,175,55,0.12), 0 6px 18px rgba(0,0,0,0.6)}
+    .aff .dot[data-aff="sombras"].active{box-shadow:0 0 0 5px rgba(212,175,55,0.12), 0 6px 18px rgba(124,58,237,0.6)}
 
     .bigbtn{flex:1;padding:12px;border-radius:12px;border:1px solid rgba(212,175,55,0.12);background:linear-gradient(180deg, rgba(212,175,55,0.06), rgba(212,175,55,0.02));color:var(--gold);font-weight:800;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease}
     .bigbtn:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.6)}
 
     /* smaller controls inside life cards to prevent overflow */
-    .lifeCard .bigbtn{padding:8px;font-size:14px;border-radius:10px;box-sizing:border-box}
+    .lifeCard .bigbtn{padding:10px;font-size:16px;border-radius:10px;box-sizing:border-box}
     .lifeCard .row{display:flex;gap:6px;align-items:center;justify-content:space-between}
     .lifeCard .row .bigbtn{flex:1;min-width:0}
 
@@ -150,41 +151,11 @@
           </div>
 
           <div class="header-center" style="align-items:center">
-            <button class="d20-btn" onclick="rollFX()" aria-label="Rolar d20">
-              <svg class="d20-svg" viewBox="0 0 120 120" role="img" aria-hidden="true">
-                <defs>
-                  <linearGradient id="goldGrad2" x1="0" x2="1">
-                    <stop offset="0%" stop-color="#f2d98a" />
-                    <stop offset="50%" stop-color="#f2d98a" />
-                    <stop offset="100%" stop-color="#b8860b" />
-                  </linearGradient>
-                  <filter id="d20Shadow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feDropShadow dx="0" dy="6" stdDeviation="10" flood-opacity="0.45" flood-color="#000" />
-                  </filter>
-                </defs>
-                <!-- subtle outer ring -->
-                <circle cx="60" cy="60" r="56" fill="rgba(0,0,0,0.08)" />
-                <!-- main poly facets (pseudo-icosahedron) -->
-                <g filter="url(#d20Shadow)">
-                  <path class="face" d="M60 12 L92 30 L102 60 L92 90 L60 108 L28 90 L18 60 L28 30 Z" fill="url(#goldGrad2)" stroke="rgba(0,0,0,0.18)" stroke-width="1" />
-                </g>
-                <!-- central diamond + inner facets for depth -->
-                <polygon points="60,22 88,40 76,76 44,76 32,40" fill="rgba(0,0,0,0.04)" />
-                <polygon points="60,28 82,44 72,72 48,72 38,44" fill="url(#goldGrad2)" stroke="rgba(0,0,0,0.12)" stroke-width="0.6" />
-                <!-- number -->
-                <text x="60" y="66" text-anchor="middle" class="num">20</text>
-              </svg>
-            </button>
-            <div class="row mini" style="margin-top:8px;display:flex;gap:8px;justify-content:center">
-              <div id="rollout" class="box" style="width:140px;text-align:center">—</div>
-              <div id="rollout2" class="box" style="width:140px;text-align:center">—</div>
-            </div>
+            <div class="mini">HUD</div>
           </div>
 
           <div class="header-right">
             <div style="display:flex;gap:8px;align-items:center">
-              <button id="soundToggle" class="precision-btn" title="Som (desligado)" onclick="toggleSound()">🔈</button>
-              <button class="precision-btn" onclick="rollPrecisionFX()">Precisão</button>
             </div>
           </div>
         </div>
@@ -195,7 +166,7 @@
     <div class="lifeWrap life-row">
       <div class="card lifeCard" id="p1card">
         <div class="name" id="p1name" onclick="editName('p1')">Jogador 1</div>
-        <div class="life" id="p1life">20</div>
+        <div class="life" id="p1life">30</div>
         <div class="aff">
           <div class="dot" data-p="p1" data-aff="arcana" style="background:var(--arcana)"></div>
           <div class="dot" data-p="p1" data-aff="marcial" style="background:var(--marcial)"></div>
@@ -203,13 +174,13 @@
           <div class="dot" data-p="p1" data-aff="religioso" style="background:var(--religioso)"></div>
         </div>
         <div class="row" style="gap:6px;margin-top:4px">
-          <button class="bigbtn" onclick="mod('p1',-1)">-1</button>
-          <button class="bigbtn" onclick="mod('p1',+1)">+1</button>
+          <button class="bigbtn" onclick="mod('p1',-1)" data-player="p1" data-delta="-1">-1</button>
+          <button class="bigbtn" onclick="mod('p1',+1)" data-player="p1" data-delta="1">+1</button>
         </div>
       </div>
       <div class="card lifeCard" id="p2card">
         <div class="name" id="p2name" onclick="editName('p2')">Jogador 2</div>
-        <div class="life" id="p2life">20</div>
+        <div class="life" id="p2life">30</div>
         <div class="aff">
           <div class="dot" data-p="p2" data-aff="arcana" style="background:var(--arcana)"></div>
           <div class="dot" data-p="p2" data-aff="marcial" style="background:var(--marcial)"></div>
@@ -217,8 +188,8 @@
           <div class="dot" data-p="p2" data-aff="religioso" style="background:var(--religioso)"></div>
         </div>
         <div class="row" style="gap:6px;margin-top:4px">
-          <button class="bigbtn" onclick="mod('p2',-1)">-1</button>
-          <button class="bigbtn" onclick="mod('p2',+1)">+1</button>
+          <button class="bigbtn" onclick="mod('p2',-1)" data-player="p2" data-delta="-1">-1</button>
+          <button class="bigbtn" onclick="mod('p2',+1)" data-player="p2" data-delta="1">+1</button>
         </div>
       </div>
     </div>
@@ -254,7 +225,7 @@
 
   <button class="bigbtn" id="install">Instalar app</button>
 
-  <canvas id="confettiCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:9999;display:none"></canvas>
+  
 
 <script>
   // --- PWA install prompt
@@ -284,7 +255,7 @@
   // Names
   function editName(p){
     const cur = get(p+'name').textContent
-    const nn = prompt('Nome do '+(p==='p1'?'Jogador 1':'Jogador 2')+':', cur) 
+    const nn = prompt('Nome do '+(p==='p1'?'Jogador 1':'Jogador 2')+':', cur)
     if(nn!==null){ get(p+'name').textContent = nn || (p==='p1'?'Jogador 1':'Jogador 2') }
   }
   function editAlly(p,i){
@@ -293,65 +264,6 @@
     const nn = prompt('Nome do aliado:', cur)
     if(nn!==null){ el.textContent = nn || ('Aliado '+(i+1)) }
   }
-
-  // D20: efeitos (rollImmediate para uso interno; rollFX/rollPrecisionFX para botões com animação/sons)
-  function rollImmediate(){ const n = 1 + Math.floor(Math.random()*20); return n }
-
-  // simple UI update helper
-  function showSingleRoll(n){ get('rollout').textContent = 'd20: '+n }
-  function showPrecision(a,b){ const best = Math.max(a,b); get('rollout2').textContent = '2d20: '+a+' / '+b+' → '+best; return best }
-
-  // Audio / FX controls
-  let audioEnabled = false
-  let audioCtx = null
-  function toggleSound(){ audioEnabled = !audioEnabled; const btn = get('soundToggle'); btn.textContent = audioEnabled? '🔊' : '🔈'; btn.title = audioEnabled? 'Som (ligado)' : 'Som (desligado)'; if(audioEnabled && !audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)() }catch(e){ audioCtx = null } } }
-
-  function playRollSound(){ if(!audioEnabled) return; if(!audioCtx) try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)() }catch(e){ return }
-    const duration = 0.8
-    const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate*duration, audioCtx.sampleRate)
-    const data = buffer.getChannelData(0)
-    for(let i=0;i<data.length;i++){ // decaying noise
-      data[i] = (Math.random()*2-1) * Math.exp(-4*i/data.length)
-    }
-    const src = audioCtx.createBufferSource(); src.buffer = buffer
-    const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 1400
-    src.connect(filter); filter.connect(audioCtx.destination); src.start(); src.stop(audioCtx.currentTime+duration)
-  }
-
-  function playTriumph(){ if(!audioEnabled) return; if(!audioCtx) try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)() }catch(e){ return }
-    const now = audioCtx.currentTime; const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type='sine'; o.frequency.setValueAtTime(880, now); g.gain.setValueAtTime(0.001, now); g.gain.linearRampToValueAtTime(0.14, now+0.02); g.gain.exponentialRampToValueAtTime(0.001, now+0.9); o.connect(g); g.connect(audioCtx.destination); o.start(now); o.stop(now+0.9)
-  }
-
-  // Confetti (simple particle system)
-  const confetti = { particles:[], running:false, canvas:null, ctx:null }
-  function ensureConfettiCanvas(){ if(confetti.canvas) return; confetti.canvas = document.getElementById('confettiCanvas'); confetti.ctx = confetti.canvas.getContext('2d'); resizeCanvas(); window.addEventListener('resize', resizeCanvas) }
-  function resizeCanvas(){ if(!confetti.canvas) return; confetti.canvas.width = window.innerWidth; confetti.canvas.height = window.innerHeight }
-  function launchConfetti(count=40){ ensureConfettiCanvas(); confetti.canvas.style.display = 'block'; const colors = ['#D4AF37','#b8860b','#f5e6b0','#fff1c6']
-    for(let i=0;i<count;i++){ confetti.particles.push({ x: Math.random()*confetti.canvas.width, y: -10, vx:(Math.random()-0.5)*6, vy: Math.random()*4+2, size:Math.random()*8+4, rot:Math.random()*360, rotSpeed:(Math.random()-0.5)*10, color: colors[Math.floor(Math.random()*colors.length)], life: Math.random()*60+80 }) }
-    if(!confetti.running){ confetti.running = true; requestAnimationFrame(confettiLoop) }
-  }
-  function confettiLoop(){ const ctx = confetti.ctx; ctx.clearRect(0,0,confetti.canvas.width, confetti.canvas.height); for(let i=confetti.particles.length-1;i>=0;i--){ const p = confetti.particles[i]; p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.rot += p.rotSpeed; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180); ctx.fillStyle = p.color; ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6); ctx.restore(); p.life--; if(p.y>confetti.canvas.height+50 || p.life<0){ confetti.particles.splice(i,1) } }
-    if(confetti.particles.length>0){ requestAnimationFrame(confettiLoop) }else{ confetti.running=false; setTimeout(()=>{ if(confetti.canvas) confetti.canvas.style.display='none' }, 300) }
-  }
-
-  // visual highlight helper
-  function flashBox(id){ const el = get(id); if(!el) return; el.classList.add('highlight'); setTimeout(()=>el.classList.remove('highlight'), 900) }
-
-  // FX roll for d20 button (with animation and optional sound/confetti)
-  function rollFX(){ const btn = document.querySelector('.d20-btn'); if(!btn) return; btn.classList.add('rolling'); playRollSound(); setTimeout(()=>{
-      const n = rollImmediate(); showSingleRoll(n);
-      // update SVG number and animate
-      const svgNum = document.querySelector('.d20-svg .num'); if(svgNum){ svgNum.textContent = n; svgNum.classList.add('pop'); setTimeout(()=>svgNum.classList.remove('pop'), 420) }
-      btn.classList.remove('rolling'); if(n>=20){ launchConfetti(60); playTriumph(); flashBox('rollout') } else if(n>=15){ flashBox('rollout') }
-    }, 900); return null }
-
-  // precision FX: two rolls, show both and best
-  function rollPrecisionFX(){ const btn = document.querySelector('.d20-btn'); if(btn) btn.classList.add('rolling'); playRollSound(); setTimeout(()=>{
-      const a = rollImmediate(); const b = rollImmediate(); const best = showPrecision(a,b); showSingleRoll(Math.max(a,b));
-      // update SVG number and animate with best
-      const svgNum2 = document.querySelector('.d20-svg .num'); if(svgNum2){ svgNum2.textContent = best; svgNum2.classList.add('pop'); setTimeout(()=>svgNum2.classList.remove('pop'), 420) }
-      if(btn) btn.classList.remove('rolling'); if(best>=20){ launchConfetti(60); playTriumph(); flashBox('rollout2') } else if(best>=15){ flashBox('rollout2') }
-    }, 900); return null }
 
   // Vitória
   function checkWinner(){
@@ -418,7 +330,6 @@
         a.style.borderWidth = '2px'
         a.style.boxShadow = `0 10px 30px ${color}55`
       }else{
-        // slightly stronger translucent border for empty slots
         a.style.borderColor = color + '55'
         a.style.borderWidth = '1px'
         a.style.boxShadow = 'none'
@@ -458,8 +369,8 @@
       const data = JSON.parse(raw)
       get('p1name').textContent = data.p1?.name || 'Jogador 1'
       get('p2name').textContent = data.p2?.name || 'Jogador 2'
-      get('p1life').textContent = data.p1?.life || '20'
-      get('p2life').textContent = data.p2?.life || '20'
+      get('p1life').textContent = data.p1?.life || '30'
+      get('p2life').textContent = data.p2?.life || '30'
       setAff('p1', data.p1?.aff || 'arcana')
       setAff('p2', data.p2?.aff || 'arcana')
       ;['p1','p2'].forEach(p=>{
@@ -476,7 +387,7 @@
   }
 
   function resetAll(){
-    get('p1life').textContent = '20'; get('p2life').textContent='20'
+    get('p1life').textContent = '30'; get('p2life').textContent='30'
     ;['p1','p2'].forEach(p=>{
       for(let i=0;i<5;i++){
         const base = document.querySelector(`.ally[data-p="${p}"][data-idx="${i}"]`)
@@ -496,7 +407,23 @@
     document.querySelectorAll('.aff .dot').forEach(dot=>{
       dot.addEventListener('click', ()=> setAff(dot.dataset.p, dot.dataset.aff))
     })
+    setupLongPressControls()
   })
+
+  // Mobile: long-press support on life +/- buttons to apply ×5 (touch-friendly)
+  function setupLongPressControls(){
+    document.querySelectorAll('.lifeCard .bigbtn[data-player]').forEach(btn=>{
+      let timer = null
+      const player = btn.dataset.player
+      const delta = parseInt(btn.dataset.delta || '1', 10)
+      const applyLong = ()=>{ mod(player, delta * 5) }
+      btn.addEventListener('pointerdown', (e)=>{ e.preventDefault(); timer = setTimeout(applyLong, 600) })
+      const clear = ()=>{ if(timer){ clearTimeout(timer); timer = null } }
+      btn.addEventListener('pointerup', clear)
+      btn.addEventListener('pointercancel', clear)
+      btn.addEventListener('pointerleave', clear)
+    })
+  }
 </script>
 </body>
 </html>
