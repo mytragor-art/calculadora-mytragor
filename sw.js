@@ -1,8 +1,10 @@
 
-const CACHE = 'mytragor-hud-v1';
+const CACHE = 'mytragor-hud-v8';
 const ASSETS = [
   './',
   './index.html',
+  './data/chosen.js',
+  './data/allies.js',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png'
